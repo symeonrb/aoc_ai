@@ -34,6 +34,7 @@ class SnakeEnv(gym.Env):
         self.reward = 0
 
         self.controller.reset()
+        self.last_apple_position = self.controller.apple_position
 
         snake_length = len(self.controller.snake_position)
         self.prev_actions = deque(maxlen=SnakeController.SNAKE_LEN_GOAL)
@@ -68,13 +69,16 @@ class SnakeEnv(gym.Env):
 
         if self.controller.running:
             self.reward = (
-                self.controller.score * 10
-                + 5
-                - self.controller.snake_apple_distance / 100
+                self.controller.score + 5 - self.controller.snake_apple_distance / 100
             )
         else:
             self.terminated = True
             self.reward = -10
+
+        # Temp boosts based on eating apple
+        if self.last_apple_position != self.controller.apple_position:
+            self.reward += 100
+        self.last_apple_position = self.controller.apple_position
 
         info = {}
         return self.observation, self.reward, self.terminated, self.truncated, info
