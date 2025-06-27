@@ -9,10 +9,11 @@ warnings.filterwarnings("ignore", category=UserWarning, module="pygame.pkgdata")
 
 env = SnakeEnv(render_mode="human")
 
-models_dir = "models/PPO-1751055497"
-model_path = f"{models_dir}/400000.zip"
+models_dir = "models/PPO-1751066748"
+model_path = f"{models_dir}/1600000.zip"
 model = PPO.load(model_path, env=env)
 
+scores = []
 episodes = 10
 for ep in range(episodes):
     obs, info = env.reset()
@@ -22,5 +23,8 @@ for ep in range(episodes):
         obs, reward, terminated, truncated, info = env.step(action)
         env.render()
         cv2.waitKey(10)
+    scores.append(env.controller.score)
 
 env.close()
+
+print(sum(scores) / len(scores))

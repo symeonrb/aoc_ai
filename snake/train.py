@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore", category=UserWarning, module="pygame.pkgdata")
 
 # Training parameters
 model_class = PPO
-SAVES = 10  # Number of saves
+SAVES = 100  # Number of saves
 TIMESTEPS = 100_000  # Number of steps between each save
 
 
@@ -24,7 +24,15 @@ if not os.path.exists(logdir):
     os.makedirs(logdir)
 
 env = SnakeEnv(render_mode="rgb_array")
+
+# Model from scratch
 model = model_class("MlpPolicy", env, verbose=1, tensorboard_log=logdir)
+
+# Model from saved
+# seed_model_dir = "models/PPO-1751056370"
+# seed_model_path = f"{seed_model_dir}/5000000.zip"
+# model = PPO.load(seed_model_path, env=env)
+
 for i in range(1, SAVES + 1):
     model.learn(
         total_timesteps=TIMESTEPS,

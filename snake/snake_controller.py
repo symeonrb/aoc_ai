@@ -10,7 +10,20 @@ class SnakeController:
     def reset(self):
         self.running = True
         # Initial Snake and Apple position
-        self.snake_position = [[250, 250], [240, 250], [230, 250]]
+        self.snake_position = [
+            [250, 250],
+            [240, 250],
+            [230, 250],
+            [220, 250],
+            [210, 250],
+            [200, 250],
+            [190, 250],
+            [180, 250],
+            [170, 250],
+            [160, 250],
+            [150, 250],
+            [140, 250],
+        ]
         self.apple_position = _get_random_apple_position()
         self.score = 0
         self.snake_head = [250, 250]
