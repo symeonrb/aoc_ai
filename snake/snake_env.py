@@ -22,7 +22,7 @@ class SnakeEnv(gym.Env):
         self.observation_space = spaces.Box(
             low=-1,
             high=500,
-            shape=(6 + SnakeController.SNAKE_LEN_GOAL,),
+            shape=(5,),
             dtype=np.int64,
         )
 
@@ -36,35 +36,25 @@ class SnakeEnv(gym.Env):
         self.controller.reset()
         self.last_apple_position = self.controller.apple_position
 
-        snake_length = len(self.controller.snake_position)
-        self.prev_actions = deque(maxlen=SnakeController.SNAKE_LEN_GOAL)
-        for _ in range(SnakeController.SNAKE_LEN_GOAL):
-            self.prev_actions.append(-1)
-
         self.observation = np.array(
             self.controller.snake_head
             + self.controller.apple_position
-            + [self.controller.snake_apple_distance, snake_length]
-            + list(self.prev_actions)
+            + [self.controller.snake_apple_distance]
         )
 
         info = {}
         return self.observation, info
 
     def step(self, action):
-        self.prev_actions.append(action)
-
         try:
             self.controller.step(action)
         except:
             self.truncated = True
 
-        snake_length = len(self.controller.snake_position)
         self.observation = np.array(
             self.controller.snake_head
             + self.controller.apple_position
-            + [self.controller.snake_apple_distance, snake_length]
-            + list(self.prev_actions)
+            + [self.controller.snake_apple_distance]
         )
 
         if self.controller.running:
