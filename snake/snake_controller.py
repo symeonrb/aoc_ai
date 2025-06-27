@@ -57,18 +57,13 @@ class SnakeController:
 
         # On collision kill the snake and print the score
         if _collision_with_boundaries(self.snake_head):
-            print("BOUNDARYYYYY")
             self.running = False
             return
 
         # On collision kill the snake and print the score
         if _collision_with_self(self.snake_position):
-            print("AUTO-CRASH", self.snake_head, self.snake_position)
             self.running = False
             return
-        else:
-
-            print("OK", self.snake_head, self.snake_position)
 
 
 def _get_random_apple_position():

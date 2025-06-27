@@ -12,7 +12,7 @@ TIMESTEPS = 10_000  # Number of steps between each save
 
 now = int(time.time())
 models_dir = f"models/PPO-{now}"
-logdir = f"logs"
+logdir = "logs"
 
 if not os.path.exists(models_dir):
     os.makedirs(models_dir)

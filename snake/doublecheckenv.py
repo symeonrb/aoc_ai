@@ -7,19 +7,22 @@ from snake_env import SnakeEnv
 
 env = SnakeEnv()
 
-view = SnakeView(env.controller)
-view.paint()
+# view = SnakeView(env.controller)
+# view.paint()
 
 episodes = 50
 for episode in range(episodes):
     obs = env.reset()
-    while True:
+    terminated = truncated = False
+    old_reward = 0
+
+    while not terminated and not truncated:
         # cv2.waitKey(125)
+
         random_action = env.action_space.sample()
         obs, reward, terminated, truncated, info = env.step(random_action)
-        print("action", random_action, "reward", reward)
+        if old_reward != reward:
+            print("episode", episode + 1, "reward", reward)
+        old_reward = reward
 
-        view.paint()
-
-        if terminated or truncated:
-            break
+        # view.paint()

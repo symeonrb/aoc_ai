@@ -11,7 +11,7 @@ class SnakeEnv(gym.Env):
 
     metadata = {"render_modes": ["human"], "render_fps": 30}
 
-    def __init__(self, render_mode: str):
+    def __init__(self, render_mode: str | None = None):
         super().__init__()
 
         self.render_mode = render_mode
