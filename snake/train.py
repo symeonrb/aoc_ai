@@ -11,7 +11,7 @@ warnings.filterwarnings("ignore", category=UserWarning, module="pygame.pkgdata")
 # Training parameters
 model_class = PPO
 SAVES = 10  # Number of saves
-TIMESTEPS = 10_000  # Number of steps between each save
+TIMESTEPS = 100_000  # Number of steps between each save
 
 
 now = int(time.time())

@@ -1,14 +1,16 @@
-import gymnasium
+import cv2
 import warnings
 from stable_baselines3 import PPO
+
+from snake_env import SnakeEnv
 
 # Remove deprecated warning
 warnings.filterwarnings("ignore", category=UserWarning, module="pygame.pkgdata")
 
-env = gymnasium.make("LunarLander-v3", render_mode="human")
+env = SnakeEnv(render_mode="human")
 
-models_dir = "models/PPO-1751044899"
-model_path = f"{models_dir}/300000.zip"
+models_dir = "models/PPO-1751047272"
+model_path = f"{models_dir}/900000.zip"
 model = PPO.load(model_path, env=env)
 
 episodes = 10
@@ -19,5 +21,6 @@ for ep in range(episodes):
         action, _states = model.predict(obs)
         obs, reward, terminated, truncated, info = env.step(action)
         env.render()
+        cv2.waitKey(10)
 
 env.close()

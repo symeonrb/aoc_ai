@@ -49,3 +49,6 @@ class SnakeView:
                 cv2.LINE_AA,
             )
             cv2.imshow("a", self.img)
+
+    def close(self):
+        cv2.destroyAllWindows()

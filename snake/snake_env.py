@@ -3,6 +3,7 @@ import numpy as np
 from gymnasium import spaces
 from collections import deque
 
+from snake_view import SnakeView
 from snake_controller import SnakeController
 
 
@@ -26,6 +27,7 @@ class SnakeEnv(gym.Env):
         )
 
         self.controller = SnakeController()
+        self.view = SnakeView(self.controller)
 
     def reset(self, seed=None, options=None):
         self.terminated = self.truncated = False
@@ -74,7 +76,7 @@ class SnakeEnv(gym.Env):
         return self.observation, self.reward, self.terminated, self.truncated, info
 
     def render(self):
-        super().render()
+        self.view.paint()
 
     def close(self):
-        super().close()
+        self.view.close()
