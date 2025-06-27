@@ -8,8 +8,8 @@ warnings.filterwarnings("ignore", category=UserWarning, module="pygame.pkgdata")
 
 env = gymnasium.make("LunarLander-v3", render_mode="human")
 
-models_dir = "models/PPO-1750931260"
-model_path = f"{models_dir}/760000.zip"
+models_dir = "models/PPO-1751044899"
+model_path = f"{models_dir}/300000.zip"
 model = PPO.load(model_path, env=env)
 
 episodes = 10
