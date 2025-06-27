@@ -26,7 +26,6 @@ if not os.path.exists(logdir):
 env = SnakeEnv(render_mode="rgb_array")
 model = model_class("MlpPolicy", env, verbose=1, tensorboard_log=logdir)
 for i in range(1, SAVES + 1):
-    print(i)
     model.learn(
         total_timesteps=TIMESTEPS,
         reset_num_timesteps=False,

@@ -1,7 +1,4 @@
-import cv2
-import numpy as np
 import random
-import time
 
 
 class SnakeController:
@@ -64,6 +61,12 @@ class SnakeController:
         if _collision_with_self(self.snake_position):
             self.running = False
             return
+
+    @property
+    def snake_apple_distance(self):
+        return abs(self.snake_head[0] - self.apple_position[0]) + abs(
+            self.snake_head[1] - self.apple_position[1]
+        )
 
 
 def _get_random_apple_position():

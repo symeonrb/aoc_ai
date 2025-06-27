@@ -22,7 +22,7 @@ class SnakeEnv(gym.Env):
         self.observation_space = spaces.Box(
             low=-1,
             high=500,
-            shape=(5 + SnakeController.SNAKE_LEN_GOAL,),
+            shape=(6 + SnakeController.SNAKE_LEN_GOAL,),
             dtype=np.int64,
         )
 
@@ -43,7 +43,7 @@ class SnakeEnv(gym.Env):
         self.observation = np.array(
             self.controller.snake_head
             + self.controller.apple_position
-            + [snake_length]
+            + [self.controller.snake_apple_distance, snake_length]
             + list(self.prev_actions)
         )
 
@@ -62,12 +62,16 @@ class SnakeEnv(gym.Env):
         self.observation = np.array(
             self.controller.snake_head
             + self.controller.apple_position
-            + [snake_length]
+            + [self.controller.snake_apple_distance, snake_length]
             + list(self.prev_actions)
         )
 
         if self.controller.running:
-            self.reward = self.controller.score * 10
+            self.reward = (
+                self.controller.score * 10
+                + 5
+                - self.controller.snake_apple_distance / 100
+            )
         else:
             self.terminated = True
             self.reward = -10
