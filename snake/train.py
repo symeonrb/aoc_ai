@@ -14,7 +14,7 @@ SAVES = 100  # Number of saves
 TIMESTEPS = 100_000  # Number of steps between each save
 
 
-now = int(time.time())
+now = int(time.time()) - 1751000000
 models_dir = f"models/{model_class.__name__}-{now}"
 logdir = "logs"
 
@@ -26,12 +26,12 @@ if not os.path.exists(logdir):
 env = SnakeEnv(render_mode="rgb_array")
 
 # Model from scratch
-model = model_class("MlpPolicy", env, verbose=1, tensorboard_log=logdir)
+# model = model_class("MlpPolicy", env, verbose=1, tensorboard_log=logdir)
 
 # Model from saved
-# seed_model_dir = "models/PPO-1751066748"
-# seed_model_path = f"{seed_model_dir}/10000000.zip"
-# model = PPO.load(seed_model_path, env=env)
+seed_model_dir = "models/PPO-1751056386"
+seed_model_path = f"{seed_model_dir}/2000000.zip"
+model = PPO.load(seed_model_path, env=env)
 
 for i in range(1, SAVES + 1):
     model.learn(

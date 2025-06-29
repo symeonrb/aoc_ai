@@ -36,17 +36,19 @@ class SnakeEnv(gym.Env):
         self.controller.reset()
         self.last_apple_position = self.controller.apple_position
         self.steps_since_last_eaten = 0
-        self.apple_distance_ref = 0  # distance when the apple appeared
+        self.apple_distance_ref = (
+            self.controller.snake_apple_distance
+        )  # distance when the apple appeared
 
         snake_length = len(self.controller.snake_position)
         self.prev_actions = deque(maxlen=SnakeController.SNAKE_LEN_GOAL)
         for _ in range(SnakeController.SNAKE_LEN_GOAL):
-            self.prev_actions.append(-1)
+            self.prev_actions.append(1)
 
         self.observation = np.array(
             [self.controller.snake_apple_distance]
-            + self.controller.snake_head
             + self.controller.apple_position
+            + self.controller.snake_head
             + [snake_length]
             + list(self.prev_actions)
         )
@@ -65,37 +67,41 @@ class SnakeEnv(gym.Env):
         snake_length = len(self.controller.snake_position)
         self.observation = np.array(
             [self.controller.snake_apple_distance]
-            + self.controller.snake_head
             + self.controller.apple_position
+            + self.controller.snake_head
             + [snake_length]
             + list(self.prev_actions)
         )
 
         if self.controller.running:
             self.reward = (
-                self.controller.score * 1_000
-                + self.steps_since_last_eaten
-                # + self.apple_distance_ref
-                # - self.controller.snake_apple_distance
+                self.controller.score * 100
+                + self.apple_distance_ref
+                - self.controller.snake_apple_distance
             )
         else:
             self.terminated = True
-            self.reward = -100_000
+            self.reward = -100
 
         self.steps_since_last_eaten += 1
 
         # Temp boosts based on eating apple
         if self.last_apple_position != self.controller.apple_position:
             self.reward += 100_000
-            # self.steps_since_last_eaten = 0
+            self.steps_since_last_eaten = 0
             self.apple_distance_ref = self.controller.snake_apple_distance
             print("EAT APPLE !!!!!")
         self.last_apple_position = self.controller.apple_position
 
-        # if self.steps_since_last_eaten > 100:
-        #     self.reward -= self.steps_since_last_eaten / 100 - 1
+        if self.steps_since_last_eaten > 100:
+            self.reward -= self.steps_since_last_eaten / 100 - 1
 
-        # print(self.reward)
+        # print(
+        #     self.reward,
+        #     self.apple_distance_ref,
+        #     self.controller.snake_apple_distance,
+        #     self.steps_since_last_eaten,
+        # )
 
         info = {}
         return self.observation, self.reward, self.terminated, self.truncated, info
