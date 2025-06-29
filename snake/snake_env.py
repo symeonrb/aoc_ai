@@ -13,6 +13,8 @@ SCORE_MULT = 10
 APPLE_BOOST = 100
 STEPS_BEFORE_SLOWNESS_PUNISHMENT = 100
 
+SMALL_OBS = True
+
 
 class SnakeEnv(gym.Env):
     """Custom Environment that follows gym interface."""
@@ -29,7 +31,7 @@ class SnakeEnv(gym.Env):
         self.observation_space = spaces.Box(
             low=-1,
             high=500,
-            shape=(6 + SnakeController.SNAKE_LEN_GOAL,),
+            shape=(4,) if SMALL_OBS else (6 + SnakeController.SNAKE_LEN_GOAL,),
             dtype=np.int64,
         )
 
@@ -52,12 +54,16 @@ class SnakeEnv(gym.Env):
         for _ in range(SnakeController.SNAKE_LEN_GOAL):
             self.prev_actions.append(1)
 
-        self.observation = np.array(
-            [self.controller.snake_apple_distance]
-            + self.controller.apple_position
-            + self.controller.snake_head
-            + [snake_length]
-            + list(self.prev_actions)
+        self.observation = (
+            np.array(self.controller.apple_position + self.controller.snake_head)
+            if SMALL_OBS
+            else np.array(
+                [self.controller.snake_apple_distance]
+                + self.controller.apple_position
+                + self.controller.snake_head
+                + [snake_length]
+                + list(self.prev_actions)
+            )
         )
 
         info = {}
@@ -72,12 +78,16 @@ class SnakeEnv(gym.Env):
             self.truncated = True
 
         snake_length = len(self.controller.snake_position)
-        self.observation = np.array(
-            [self.controller.snake_apple_distance]
-            + self.controller.apple_position
-            + self.controller.snake_head
-            + [snake_length]
-            + list(self.prev_actions)
+        self.observation = (
+            np.array(self.controller.apple_position + self.controller.snake_head)
+            if SMALL_OBS
+            else np.array(
+                [self.controller.snake_apple_distance]
+                + self.controller.apple_position
+                + self.controller.snake_head
+                + [snake_length]
+                + list(self.prev_actions)
+            )
         )
 
         if self.controller.running:
