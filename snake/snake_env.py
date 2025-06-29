@@ -110,11 +110,11 @@ class SnakeEnv(gym.Env):
 
         if self.controller.running:
             self.reward = (
-                self.controller.score
-                * SCORE_MULT
+                # self.controller.score
+                # * SCORE_MULT
                 # + SCORE_BASE
-                # + self.apple_distance_ref
-                # - self.controller.snake_apple_distance
+                self.apple_distance_ref
+                - self.controller.snake_apple_distance
             )
         else:
             self.terminated = True
