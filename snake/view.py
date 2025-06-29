@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore", category=UserWarning, module="pygame.pkgdata")
 env = SnakeEnv(render_mode="human")
 
 models_dir = "models/PPO-206711"
-model_path = f"{models_dir}/3500000.zip"
+model_path = f"{models_dir}/5000000.zip"
 model = PPO.load(model_path, env=env)
 
 print(f"Displaying {model_path}")

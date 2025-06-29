@@ -110,10 +110,11 @@ class SnakeEnv(gym.Env):
 
         if self.controller.running:
             self.reward = (
-                self.controller.score * SCORE_MULT
-                + SCORE_BASE
-                + self.apple_distance_ref
-                - self.controller.snake_apple_distance
+                self.controller.score
+                * SCORE_MULT
+                # + SCORE_BASE
+                # + self.apple_distance_ref
+                # - self.controller.snake_apple_distance
             )
         else:
             self.terminated = True
@@ -123,7 +124,7 @@ class SnakeEnv(gym.Env):
 
         # Temp boosts based on eating apple
         if self.last_apple_position != self.controller.apple_position:
-            self.reward += APPLE_BOOST
+            # self.reward += APPLE_BOOST
             self.steps_since_last_eaten = 0
             self.apple_distance_ref = self.controller.snake_apple_distance
             print("EAT APPLE !!!!!")
