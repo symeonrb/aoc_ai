@@ -9,29 +9,34 @@ warnings.filterwarnings("ignore", category=UserWarning, module="pygame.pkgdata")
 
 env = SnakeEnv(render_mode="human")
 
-models_dir = "models/PPO-1751069820"
+models_dir = "models/PPO-214297"
 filename_end = "00000.zip"
 
 print(f"Starting benchmark of {models_dir}/X{filename_end}")
 
-for i in range(1, 30):
-    model = PPO.load(f"{models_dir}/{i}{filename_end}", env=env)
+i = 0
+while True:
+    i += 1
+    try:
+        model = PPO.load(f"{models_dir}/{i}{filename_end}", env=env)
 
-    scores = []
-    episodes = 1000
-    for ep in range(episodes):
-        obs, info = env.reset()
-        terminated = truncated = False
-        while not terminated and not truncated:
-            action, _states = model.predict(obs)
-            obs, reward, terminated, truncated, info = env.step(action)
-            # env.render()
-            # cv2.waitKey(10)
-        scores.append(env.controller.score)
+        scores = []
+        episodes = 1000
+        for ep in range(episodes):
+            obs, info = env.reset()
+            terminated = truncated = False
+            while not terminated and not truncated:
+                action, _states = model.predict(obs)
+                obs, reward, terminated, truncated, info = env.step(action)
+                # env.render()
+                # cv2.waitKey(10)
+            scores.append(env.controller.score)
 
-    env.close()
+        env.close()
 
-    print(f"{i}{filename_end} :", sum(scores) / len(scores))
+        print(f"{i}{filename_end} :", sum(scores) / len(scores))
+    except:
+        break
 
 # PPO-1751056370 :
 # 2000000_seed.zip : 6.016
@@ -135,3 +140,112 @@ for i in range(1, 30):
 # 2700000.zip : 8.172
 # 2800000.zip : 9.205
 # 2900000.zip : 7.932
+
+# models/PPO-211639/X00000.zip
+# 100000.zip : 0.249
+# 200000.zip : 0.296
+# 300000.zip : 0.821
+# 400000.zip : 1.103
+# 500000.zip : 1.177
+# 600000.zip : 1.632
+# 700000.zip : 1.702
+# 800000.zip : 1.9
+# 900000.zip : 2.135
+# 1000000.zip : 2.351
+# 1100000.zip : 3.185
+# 1200000.zip : 3.981
+# 1300000.zip : 4.38
+# 1400000.zip : 5.068
+# 1500000.zip : 5.567
+# 1600000.zip : 6.089
+# 1700000.zip : 6.389
+# 1800000.zip : 6.732
+# 1900000.zip : 6.938
+# 2000000.zip : 7.938
+# 2100000.zip : 8.372
+# 2200000.zip : 8.965
+# 2300000.zip : 8.965
+# 2400000.zip : 9.698
+# 2500000.zip : 9.264
+# 2600000.zip : 9.515
+# 2700000.zip : 9.405
+# 2800000.zip : 9.83
+# 2900000.zip : 9.759
+# 3000000.zip : 9.467
+# 3100000.zip : 10.24
+# 3200000.zip : 9.404
+# 3300000.zip : 9.659
+# 3400000.zip : 9.212
+# 3500000.zip : 10.016
+# 3600000.zip : 10.421 +++++
+# 3700000.zip : 10.415
+# 3800000.zip : 10.143
+# 3900000.zip : 9.653
+# 4000000.zip : 9.778
+# 4100000.zip : 10.362
+# 4200000.zip : 10.199
+# 4300000.zip : 10.186
+# 4400000.zip : 9.491
+# 4500000.zip : 9.541
+# 4600000.zip : 9.53
+# 4700000.zip : 9.595
+# 4800000.zip : 9.266
+# 4900000.zip : 9.05
+# 5000000.zip : 9.163
+# 5100000.zip : 9.326
+# 5200000.zip : 8.636
+# 5300000.zip : 9.418
+# 5400000.zip : 9.183
+# 5500000.zip : 9.578
+
+# models/PPO-214297/X00000.zip
+# 100000.zip : 0.382
+# 200000.zip : 0.158
+# 300000.zip : 1.007
+# 400000.zip : 1.304
+# 500000.zip : 1.644
+# 600000.zip : 2.208
+# 700000.zip : 2.863
+# 800000.zip : 3.229
+# 900000.zip : 3.8
+# 1000000.zip : 4.744
+# 1100000.zip : 4.988
+# 1200000.zip : 6.107
+# 1300000.zip : 6.26
+# 1400000.zip : 7.187
+# 1500000.zip : 7.846
+# 1600000.zip : 7.755
+# 1700000.zip : 8.666
+# 1800000.zip : 9.106  ++
+# 1900000.zip : 9.127
+# 2000000.zip : 9.03
+# 2100000.zip : 9.189
+# 2200000.zip : 9.695
+# 2300000.zip : 9.548
+# 2400000.zip : 9.785
+# 2500000.zip : 10.235
+# 2600000.zip : 10.283
+# 2700000.zip : 9.752
+# 2800000.zip : 9.603
+# 2900000.zip : 9.478
+# 3000000.zip : 9.532
+# 3100000.zip : 10.106
+# 3200000.zip : 9.549
+# 3300000.zip : 9.675
+# 3400000.zip : 9.434
+# 3500000.zip : 10.151
+# 3600000.zip : 9.771
+# 3700000.zip : 9.445
+# 3800000.zip : 9.597
+# 3900000.zip : 10.093
+# 4000000.zip : 9.735
+# 4100000.zip : 9.825
+# 4200000.zip : 10.133
+# 4300000.zip : 10.093
+# 4400000.zip : 10.303
+# 4500000.zip : 9.27
+# 4600000.zip : 8.511
+# 4700000.zip : 8.833
+# 4800000.zip : 9.033
+# 4900000.zip : 9.102
+# 5000000.zip : 9.533
