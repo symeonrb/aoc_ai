@@ -75,13 +75,13 @@ class SnakeEnv(gym.Env):
 
         if self.controller.running:
             self.reward = (
-                self.controller.score * 100
+                self.controller.score * 500
                 + self.apple_distance_ref
                 - self.controller.snake_apple_distance
             )
         else:
             self.terminated = True
-            self.reward = -100
+            self.reward = -100_000
 
         self.steps_since_last_eaten += 1
 
@@ -96,12 +96,12 @@ class SnakeEnv(gym.Env):
         if self.steps_since_last_eaten > 100:
             self.reward -= self.steps_since_last_eaten / 100 - 1
 
-        # print(
-        #     self.reward,
-        #     self.apple_distance_ref,
-        #     self.controller.snake_apple_distance,
-        #     self.steps_since_last_eaten,
-        # )
+        print(
+            self.reward,
+            self.apple_distance_ref,
+            self.controller.snake_apple_distance,
+            self.steps_since_last_eaten,
+        )
 
         info = {}
         return self.observation, self.reward, self.terminated, self.truncated, info
