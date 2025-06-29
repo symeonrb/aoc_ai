@@ -7,7 +7,7 @@ from snake_view import SnakeView
 from snake_controller import SnakeController
 
 
-SCORE_BASE = 5
+SCORE_BASE = 50
 DEATH_PUNISHMENT = -10
 SCORE_MULT = 10
 APPLE_BOOST = 100
