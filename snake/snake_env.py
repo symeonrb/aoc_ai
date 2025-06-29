@@ -13,7 +13,7 @@ SCORE_MULT = 10
 APPLE_BOOST = 100_000
 STEPS_BEFORE_SLOWNESS_PUNISHMENT = 50
 
-OBS_SIZE = 5
+OBS_SIZE = 4
 
 
 class SnakeEnv(gym.Env):
@@ -109,12 +109,13 @@ class SnakeEnv(gym.Env):
         )
 
         if self.controller.running:
-            self.reward = (
-                # self.controller.score * SCORE_MULT
-                # + SCORE_BASE
-                self.apple_distance_ref
-                - self.controller.snake_apple_distance
-            )
+            self.reward = 0
+            # (
+            #     # self.controller.score * SCORE_MULT
+            #     # + SCORE_BASE
+            #     # + self.apple_distance_ref
+            #     # - self.controller.snake_apple_distance
+            # )
         else:
             self.terminated = True
             self.reward = DEATH_PUNISHMENT
