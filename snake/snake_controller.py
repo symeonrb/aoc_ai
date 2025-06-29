@@ -14,8 +14,8 @@ class SnakeController:
             [250, 250],
             [240, 250],
             [230, 250],
-            [220, 250],
-            [210, 250],
+            # [220, 250],
+            # [210, 250],
             # [200, 250],
             # [190, 250],
             # [180, 250],
@@ -59,11 +59,11 @@ class SnakeController:
         if self.snake_head == self.apple_position:
             self.apple_position = _get_random_apple_position()
             self.score += 1
-            self.snake_position.insert(0, list(self.snake_head))
+        #     self.snake_position.insert(0, list(self.snake_head))
 
-        else:
-            self.snake_position.insert(0, list(self.snake_head))
-            self.snake_position.pop()
+        # else:
+        self.snake_position.insert(0, list(self.snake_head))
+        self.snake_position.pop()
 
         # On collision kill the snake and print the score
         if _collision_with_boundaries(self.snake_head):
