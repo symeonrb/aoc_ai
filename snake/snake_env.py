@@ -7,6 +7,13 @@ from snake_view import SnakeView
 from snake_controller import SnakeController
 
 
+SCORE_BASE = 5
+DEATH_PUNISHMENT = -10
+SCORE_MULT = 10
+APPLE_BOOST = 100
+STEPS_BEFORE_SLOWNESS_PUNISHMENT = 100
+
+
 class SnakeEnv(gym.Env):
     """Custom Environment that follows gym interface."""
 
@@ -75,26 +82,29 @@ class SnakeEnv(gym.Env):
 
         if self.controller.running:
             self.reward = (
-                self.controller.score * 500
+                self.controller.score * SCORE_MULT
+                + SCORE_BASE
                 + self.apple_distance_ref
                 - self.controller.snake_apple_distance
             )
         else:
             self.terminated = True
-            self.reward = -100_000
+            self.reward = DEATH_PUNISHMENT
 
         self.steps_since_last_eaten += 1
 
         # Temp boosts based on eating apple
         if self.last_apple_position != self.controller.apple_position:
-            self.reward += 100_000
+            self.reward += APPLE_BOOST
             self.steps_since_last_eaten = 0
             self.apple_distance_ref = self.controller.snake_apple_distance
             print("EAT APPLE !!!!!")
         self.last_apple_position = self.controller.apple_position
 
-        if self.steps_since_last_eaten > 100:
-            self.reward -= self.steps_since_last_eaten / 100 - 1
+        if self.steps_since_last_eaten > STEPS_BEFORE_SLOWNESS_PUNISHMENT:
+            self.reward -= (
+                self.steps_since_last_eaten / STEPS_BEFORE_SLOWNESS_PUNISHMENT - 1
+            )
 
         # print(
         #     self.reward,
