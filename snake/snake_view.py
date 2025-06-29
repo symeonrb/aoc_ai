@@ -16,7 +16,6 @@ class SnakeView:
         if self.controller.running:
 
             cv2.imshow("snake", self.img)
-            cv2.setWindowTitle("snake", str(self.controller.score))
             self.img = np.zeros((CANVAS_WIDTH, CANVAS_HEIGHT, 3), dtype="uint8")
             # Display Apple
             cv2.rectangle(
@@ -56,7 +55,9 @@ class SnakeView:
                 2,
                 cv2.LINE_AA,
             )
-            cv2.imshow("a", self.img)
+            cv2.imshow("snake", self.img)
+
+        cv2.setWindowTitle("snake", str(self.controller.score))
 
     def close(self):
         cv2.destroyAllWindows()

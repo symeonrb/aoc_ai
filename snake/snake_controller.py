@@ -103,7 +103,7 @@ class SnakeController:
                 self.snake_head[0] + dx * distance,
                 self.snake_head[1] + dy * distance,
             ]
-            if _collision_with_boundaries(new_head) or _collision_with_self(new_head):
+            if _collision_with_boundaries(new_head) or new_head in self.snake_position:
                 return distance
             distance += 1
 

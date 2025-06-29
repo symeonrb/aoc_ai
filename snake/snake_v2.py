@@ -38,6 +38,13 @@ while controller.running:
 
     controller.step(button_direction)
 
+    # next_obstacles = [
+    #     controller.next_obstacle(0),
+    #     controller.next_obstacle(1),
+    #     controller.next_obstacle(2),
+    #     controller.next_obstacle(3),
+    # ]
+    # print(next_obstacles)
 
 view.paint()
 cv2.waitKey(0)

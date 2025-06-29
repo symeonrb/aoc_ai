@@ -8,11 +8,10 @@ from snake_controller import BOARD_HEIGHT, BOARD_WIDTH, SnakeController
 
 
 DEATH_PUNISHMENT = -1
-APPLE_BOOST = 10
-DISTANCE__REWARD_COEF = 0.01
+APPLE_BOOST = 100
 
 MAX_STEPS = 1500
-OBS_LENGTH = 8
+OBS_LENGTH = 6
 
 
 class SnakeEnv(gym.Env):
@@ -28,7 +27,7 @@ class SnakeEnv(gym.Env):
         # must be gym.spaces object
         self.action_space = spaces.Discrete(4)
         self.observation_space = spaces.Box(
-            low=0.0,
+            low=-1.0 if OBS_LENGTH == 6 else 0.0,
             high=1.0,
             shape=(OBS_LENGTH,),
             dtype=np.float32,
@@ -36,6 +35,37 @@ class SnakeEnv(gym.Env):
 
         self.controller = SnakeController()
         self.view = SnakeView(self.controller)
+
+    def _get_observation(self):
+
+        next_obstacles = (
+            [
+                self.controller.next_obstacle(0) / BOARD_HEIGHT,
+                self.controller.next_obstacle(1) / BOARD_HEIGHT,
+                self.controller.next_obstacle(2) / BOARD_WIDTH,
+                self.controller.next_obstacle(3) / BOARD_WIDTH,
+            ]
+            if OBS_LENGTH > 4
+            else []
+        )
+
+        positions = (
+            [
+                (self.controller.snake_head[0] - self.controller.apple_position[0])
+                / BOARD_WIDTH,
+                (self.controller.snake_head[1] - self.controller.apple_position[1])
+                / BOARD_HEIGHT,
+            ]
+            if OBS_LENGTH == 6
+            else [
+                self.controller.apple_position[0] / BOARD_WIDTH,
+                self.controller.apple_position[1] / BOARD_HEIGHT,
+                self.controller.snake_head[0] / BOARD_WIDTH,
+                self.controller.snake_head[1] / BOARD_HEIGHT,
+            ]
+        )
+
+        return np.array([*positions, *next_obstacles])
 
     def reset(self, seed=None, options=None):
         self.terminated = self.truncated = False
@@ -47,27 +77,7 @@ class SnakeEnv(gym.Env):
         # distance when the apple appeared
         self.apple_distance_ref = self.controller.snake_apple_distance
 
-        next_obstacles = (
-            [
-                self.controller.next_obstacle(0),
-                self.controller.next_obstacle(1),
-                self.controller.next_obstacle(2),
-                self.controller.next_obstacle(3),
-            ]
-            if OBS_LENGTH > 4
-            else []
-        )
-
-        self.observation = np.array(
-            [
-                self.controller.apple_position[0] / BOARD_WIDTH,
-                self.controller.apple_position[1] / BOARD_HEIGHT,
-                self.controller.snake_head[0] / BOARD_WIDTH,
-                self.controller.snake_head[1] / BOARD_HEIGHT,
-                *next_obstacles,
-            ]
-        )
-
+        self.observation = self._get_observation()
         info = {}
         return self.observation, info
 
@@ -80,34 +90,12 @@ class SnakeEnv(gym.Env):
         if self.render_mode == "human":
             self.view.paint()
 
-        next_obstacles = (
-            [
-                self.controller.next_obstacle(0),
-                self.controller.next_obstacle(1),
-                self.controller.next_obstacle(2),
-                self.controller.next_obstacle(3),
-            ]
-            if OBS_LENGTH > 4
-            else []
-        )
-        print(next_obstacles)
-
-        self.observation = np.array(
-            [
-                self.controller.apple_position[0] / BOARD_WIDTH,
-                self.controller.apple_position[1] / BOARD_HEIGHT,
-                self.controller.snake_head[0] / BOARD_WIDTH,
-                self.controller.snake_head[1] / BOARD_HEIGHT,
-                *next_obstacles,
-            ]
-        )
+        self.observation = self._get_observation()
+        # print(self.observation)
         info = {}
 
         if self.controller.running:
             self.reward = 0
-            # (
-            #     self.apple_distance_ref - self.controller.snake_apple_distance
-            # ) * DISTANCE__REWARD_COEF
         else:
             self.terminated = True
             self.reward = DEATH_PUNISHMENT
