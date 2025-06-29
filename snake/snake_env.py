@@ -8,11 +8,11 @@ from snake_controller import BOARD_HEIGHT, BOARD_WIDTH, SnakeController
 
 
 DEATH_PUNISHMENT = -1
-APPLE_BOOST = 1
+APPLE_BOOST = 10
 DISTANCE__REWARD_COEF = 0.01
 
-MAX_STEPS = 500
-SNAKE_LEN_GOAL = 30
+MAX_STEPS = 1500
+OBS_LENGTH = 8
 
 
 class SnakeEnv(gym.Env):
@@ -30,7 +30,7 @@ class SnakeEnv(gym.Env):
         self.observation_space = spaces.Box(
             low=0.0,
             high=1.0,
-            shape=(4,),
+            shape=(OBS_LENGTH,),
             dtype=np.float32,
         )
 
@@ -47,12 +47,24 @@ class SnakeEnv(gym.Env):
         # distance when the apple appeared
         self.apple_distance_ref = self.controller.snake_apple_distance
 
+        next_obstacles = (
+            [
+                self.controller.next_obstacle(0),
+                self.controller.next_obstacle(1),
+                self.controller.next_obstacle(2),
+                self.controller.next_obstacle(3),
+            ]
+            if OBS_LENGTH > 4
+            else []
+        )
+
         self.observation = np.array(
             [
                 self.controller.apple_position[0] / BOARD_WIDTH,
                 self.controller.apple_position[1] / BOARD_HEIGHT,
                 self.controller.snake_head[0] / BOARD_WIDTH,
                 self.controller.snake_head[1] / BOARD_HEIGHT,
+                *next_obstacles,
             ]
         )
 
@@ -68,23 +80,37 @@ class SnakeEnv(gym.Env):
         if self.render_mode == "human":
             self.view.paint()
 
+        next_obstacles = (
+            [
+                self.controller.next_obstacle(0),
+                self.controller.next_obstacle(1),
+                self.controller.next_obstacle(2),
+                self.controller.next_obstacle(3),
+            ]
+            if OBS_LENGTH > 4
+            else []
+        )
+        print(next_obstacles)
+
         self.observation = np.array(
             [
                 self.controller.apple_position[0] / BOARD_WIDTH,
                 self.controller.apple_position[1] / BOARD_HEIGHT,
                 self.controller.snake_head[0] / BOARD_WIDTH,
                 self.controller.snake_head[1] / BOARD_HEIGHT,
+                *next_obstacles,
             ]
         )
         info = {}
 
         if self.controller.running:
-            self.reward = (
-                self.apple_distance_ref - self.controller.snake_apple_distance
-            ) * DISTANCE__REWARD_COEF
+            self.reward = 0
+            # (
+            #     self.apple_distance_ref - self.controller.snake_apple_distance
+            # ) * DISTANCE__REWARD_COEF
         else:
             self.terminated = True
-            self.reward = -DEATH_PUNISHMENT
+            self.reward = DEATH_PUNISHMENT
 
         if self.last_apple_position != self.controller.apple_position:
             self.reward += APPLE_BOOST

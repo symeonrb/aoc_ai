@@ -84,6 +84,29 @@ class SnakeController:
             self.snake_head[1] - self.apple_position[1]
         )
 
+    # Direction : 0-Left, 1-Right, 2-Down, 3-Up
+    def next_obstacle(self, direction: int):
+        dx = 0
+        dy = 0
+        if direction == 0:
+            dx = -1
+        if direction == 1:
+            dx = 1
+        if direction == 2:
+            dy = 1
+        if direction == 3:
+            dy = -1
+
+        distance = 1
+        while True:
+            new_head = [
+                self.snake_head[0] + dx * distance,
+                self.snake_head[1] + dy * distance,
+            ]
+            if _collision_with_boundaries(new_head) or _collision_with_self(new_head):
+                return distance
+            distance += 1
+
 
 def _get_random_apple_position():
     return [random.randrange(1, 50), random.randrange(1, 50)]
