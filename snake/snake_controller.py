@@ -3,6 +3,7 @@ import random
 
 BOARD_WIDTH = 50
 BOARD_HEIGHT = 50
+GROWABLE_QUEUE = True
 
 
 class SnakeController:
@@ -48,7 +49,7 @@ class SnakeController:
             action = 3
         self.last_action = action
 
-        # Change the head position based on the ai action
+        # Change the head position based on the action
         if action == 1:
             self.snake_head[0] += 1
         elif action == 0:
@@ -58,22 +59,21 @@ class SnakeController:
         elif action == 3:
             self.snake_head[1] -= 1
 
-        # Increase Snake length on eating apple
+        # Update snake_position
+        self.snake_position.insert(0, list(self.snake_head))
+        queue = self.snake_position.pop()
+
+        # When eating apple
         if self.snake_head == self.apple_position:
             self.apple_position = _get_random_apple_position()
             self.score += 1
-        #     self.snake_position.insert(0, list(self.snake_head))
+            if GROWABLE_QUEUE:
+                self.snake_position.append(queue)
 
-        # else:
-        self.snake_position.insert(0, list(self.snake_head))
-        self.snake_position.pop()
-
-        # On collision kill the snake and print the score
+        # Collision
         if _collision_with_boundaries(self.snake_head):
             self.running = False
             return
-
-        # On collision kill the snake and print the score
         if _collision_with_self(self.snake_position):
             self.running = False
             return
