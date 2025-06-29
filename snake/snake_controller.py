@@ -1,8 +1,11 @@
 import random
 
 
+BOARD_WIDTH = 50
+BOARD_HEIGHT = 50
+
+
 class SnakeController:
-    SNAKE_LEN_GOAL = 30
 
     def __init__(self):
         self.reset()
@@ -11,22 +14,22 @@ class SnakeController:
         self.running = True
         # Initial Snake and Apple position
         self.snake_position = [
-            [250, 250],
-            [240, 250],
-            [230, 250],
-            # [220, 250],
-            # [210, 250],
-            # [200, 250],
-            # [190, 250],
-            # [180, 250],
-            # [170, 250],
-            # [160, 250],
-            # [150, 250],
-            # [140, 250],
+            [25, 25],
+            [24, 25],
+            [23, 25],
+            # [22, 25],
+            # [21, 25],
+            # [20, 25],
+            # [19, 25],
+            # [18, 25],
+            # [17, 25],
+            # [16, 25],
+            # [15, 25],
+            # [14, 25],
         ]
         self.apple_position = _get_random_apple_position()
         self.score = 0
-        self.snake_head = [250, 250]
+        self.snake_head = [25, 25]
         self.last_action = 1
 
     # Action : 0-Left, 1-Right, 3-Up, 2-Down
@@ -47,13 +50,13 @@ class SnakeController:
 
         # Change the head position based on the ai action
         if action == 1:
-            self.snake_head[0] += 10
+            self.snake_head[0] += 1
         elif action == 0:
-            self.snake_head[0] -= 10
+            self.snake_head[0] -= 1
         elif action == 2:
-            self.snake_head[1] += 10
+            self.snake_head[1] += 1
         elif action == 3:
-            self.snake_head[1] -= 10
+            self.snake_head[1] -= 1
 
         # Increase Snake length on eating apple
         if self.snake_head == self.apple_position:
@@ -83,14 +86,14 @@ class SnakeController:
 
 
 def _get_random_apple_position():
-    return [random.randrange(1, 50) * 10, random.randrange(1, 50) * 10]
+    return [random.randrange(1, 50), random.randrange(1, 50)]
 
 
 def _collision_with_boundaries(snake_head):
     return (
-        snake_head[0] >= 500
+        snake_head[0] >= BOARD_WIDTH
         or snake_head[0] < 0
-        or snake_head[1] >= 500
+        or snake_head[1] >= BOARD_HEIGHT
         or snake_head[1] < 0
     )
 

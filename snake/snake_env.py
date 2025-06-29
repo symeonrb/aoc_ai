@@ -4,16 +4,15 @@ from gymnasium import spaces
 from collections import deque
 
 from snake_view import SnakeView
-from snake_controller import SnakeController
+from snake_controller import BOARD_HEIGHT, BOARD_WIDTH, SnakeController
 
 
-SCORE_BASE = 50
-DEATH_PUNISHMENT = -1_000
-SCORE_MULT = 10
-APPLE_BOOST = 100_000
-STEPS_BEFORE_SLOWNESS_PUNISHMENT = 10
+DEATH_PUNISHMENT = -1
+APPLE_BOOST = 1
+DISTANCE__REWARD_COEF = 0.01
 
-OBS_SIZE = 4
+MAX_STEPS = 500
+SNAKE_LEN_GOAL = 30
 
 
 class SnakeEnv(gym.Env):
@@ -29,12 +28,10 @@ class SnakeEnv(gym.Env):
         # must be gym.spaces object
         self.action_space = spaces.Discrete(4)
         self.observation_space = spaces.Box(
-            low=-1,
-            high=500,
-            shape=(
-                (OBS_SIZE,) if OBS_SIZE < 10 else (6 + SnakeController.SNAKE_LEN_GOAL,)
-            ),
-            dtype=np.int64,
+            low=0.0,
+            high=1.0,
+            shape=(4,),
+            dtype=np.float32,
         )
 
         self.controller = SnakeController()
@@ -43,106 +40,69 @@ class SnakeEnv(gym.Env):
     def reset(self, seed=None, options=None):
         self.terminated = self.truncated = False
         self.reward = 0
+        self.step_count = 0
 
         self.controller.reset()
         self.last_apple_position = self.controller.apple_position
-        self.steps_since_last_eaten = 0
-        self.apple_distance_ref = (
-            self.controller.snake_apple_distance
-        )  # distance when the apple appeared
+        # distance when the apple appeared
+        self.apple_distance_ref = self.controller.snake_apple_distance
 
-        snake_length = len(self.controller.snake_position)
-        self.prev_actions = deque(maxlen=SnakeController.SNAKE_LEN_GOAL)
-        for _ in range(SnakeController.SNAKE_LEN_GOAL):
-            self.prev_actions.append(1)
-
-        self.observation = (
-            np.array(self.controller.apple_position + self.controller.snake_head)
-            if OBS_SIZE == 4
-            else (
-                np.array(
-                    [self.controller.snake_apple_distance]
-                    + self.controller.apple_position
-                    + self.controller.snake_head
-                )
-                if OBS_SIZE == 5
-                else np.array(
-                    [self.controller.snake_apple_distance]
-                    + self.controller.apple_position
-                    + self.controller.snake_head
-                    + [snake_length]
-                    + list(self.prev_actions)
-                )
-            )
+        self.observation = np.array(
+            [
+                self.controller.apple_position[0] / BOARD_WIDTH,
+                self.controller.apple_position[1] / BOARD_HEIGHT,
+                self.controller.snake_head[0] / BOARD_WIDTH,
+                self.controller.snake_head[1] / BOARD_HEIGHT,
+            ]
         )
 
         info = {}
         return self.observation, info
 
     def step(self, action):
-        self.prev_actions.append(action)
-
         try:
             self.controller.step(action)
         except:
             self.truncated = True
 
-        snake_length = len(self.controller.snake_position)
-        self.observation = (
-            np.array(self.controller.apple_position + self.controller.snake_head)
-            if OBS_SIZE == 4
-            else (
-                np.array(
-                    [self.controller.snake_apple_distance]
-                    + self.controller.apple_position
-                    + self.controller.snake_head
-                )
-                if OBS_SIZE == 5
-                else np.array(
-                    [self.controller.snake_apple_distance]
-                    + self.controller.apple_position
-                    + self.controller.snake_head
-                    + [snake_length]
-                    + list(self.prev_actions)
-                )
-            )
+        if self.render_mode == "human":
+            self.view.paint()
+
+        self.observation = np.array(
+            [
+                self.controller.apple_position[0] / BOARD_WIDTH,
+                self.controller.apple_position[1] / BOARD_HEIGHT,
+                self.controller.snake_head[0] / BOARD_WIDTH,
+                self.controller.snake_head[1] / BOARD_HEIGHT,
+            ]
         )
+        info = {}
 
         if self.controller.running:
-            self.reward = 0
-            # (
-            #     # self.controller.score * SCORE_MULT
-            #     # + SCORE_BASE
-            #     # + self.apple_distance_ref
-            #     # - self.controller.snake_apple_distance
-            # )
+            self.reward = (
+                self.apple_distance_ref - self.controller.snake_apple_distance
+            ) * DISTANCE__REWARD_COEF
         else:
             self.terminated = True
-            self.reward = DEATH_PUNISHMENT
+            self.reward = -DEATH_PUNISHMENT
 
-        self.steps_since_last_eaten += 1
-
-        # Temp boosts based on eating apple
         if self.last_apple_position != self.controller.apple_position:
             self.reward += APPLE_BOOST
-            self.steps_since_last_eaten = 0
             self.apple_distance_ref = self.controller.snake_apple_distance
-            # print("EAT APPLE !!!!!")
-        self.last_apple_position = self.controller.apple_position
+            info["event"] = "apple_eaten"
 
-        # if self.steps_since_last_eaten > STEPS_BEFORE_SLOWNESS_PUNISHMENT:
-        #     self.reward -= (
-        #         self.steps_since_last_eaten / STEPS_BEFORE_SLOWNESS_PUNISHMENT - 1
-        #     )
+        self.last_apple_position = self.controller.apple_position
 
         # print(
         #     self.reward,
         #     self.apple_distance_ref,
         #     self.controller.snake_apple_distance,
-        #     self.steps_since_last_eaten,
         # )
 
-        info = {}
+        self.step_count += 1
+        if self.step_count > MAX_STEPS:
+            self.truncated = True
+
         return self.observation, self.reward, self.terminated, self.truncated, info
 
     def render(self):
