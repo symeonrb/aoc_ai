@@ -11,7 +11,7 @@ A collection of reinforcement learning exercises and demos, including a Snake ga
 
 ## Snake demo
 
-![Snake Game Demo](assets/snake_demo.mov)
+![Snake Game Demo](assets/snake_demo.gif)
 
 ## Installation
 
