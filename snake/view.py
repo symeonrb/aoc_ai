@@ -7,14 +7,14 @@ from snake_env import SnakeEnv
 # Remove deprecated warning
 warnings.filterwarnings("ignore", category=UserWarning, module="pygame.pkgdata")
 
-BENCHMARK = True
+BENCHMARK = False
 
 env = SnakeEnv(render_mode=None if BENCHMARK else "human")
 
 # models_dir = "models/PPO-230262"
 # model_path = f"{models_dir}/2200000.zip"
-models_dir = "models/PPO-232619"
-model_path = f"{models_dir}/6300000.zip"
+models_dir = "models/PPO-232559"
+model_path = f"{models_dir}/9900000.zip"
 model = PPO.load(model_path, env=env)
 
 print(f"{"Benchmarking" if BENCHMARK else "Displaying"} {model_path}")

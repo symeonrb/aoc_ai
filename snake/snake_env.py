@@ -10,7 +10,7 @@ from snake_controller import BOARD_HEIGHT, BOARD_WIDTH, SnakeController
 DEATH_PUNISHMENT = -1
 APPLE_BOOST = 100
 
-MAX_STEPS = 1500
+# MAX_STEPS = 15_000
 OBS_LENGTH = 6
 
 
@@ -70,7 +70,7 @@ class SnakeEnv(gym.Env):
     def reset(self, seed=None, options=None):
         self.terminated = self.truncated = False
         self.reward = 0
-        self.step_count = 0
+        # self.step_count = 0
 
         self.controller.reset()
         self.last_apple_position = self.controller.apple_position
@@ -113,9 +113,9 @@ class SnakeEnv(gym.Env):
         #     self.controller.snake_apple_distance,
         # )
 
-        self.step_count += 1
-        if self.step_count > MAX_STEPS:
-            self.truncated = True
+        # self.step_count += 1
+        # if self.step_count > MAX_STEPS:
+        #     self.truncated = True
 
         return self.observation, self.reward, self.terminated, self.truncated, info
 
