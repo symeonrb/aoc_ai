@@ -11,7 +11,7 @@ warnings.filterwarnings("ignore", category=UserWarning, module="pygame.pkgdata")
 # Training parameters
 model_class = PPO
 SAVES = 10  # Number of saves
-TIMESTEPS = 10_000  # Number of steps between each save
+TIMESTEPS = 1_000_000  # Number of steps between each save
 SAVE = True
 
 
@@ -28,17 +28,17 @@ if SAVE:
 env = ChessEnv()
 
 # Model from scratch
-model = model_class(
-    "MlpPolicy",
-    env,
-    verbose=1,
-    tensorboard_log=logdir if SAVE else None,
-)
+# model = model_class(
+#     "MlpPolicy",
+#     env,
+#     verbose=1,
+#     tensorboard_log=logdir if SAVE else None,
+# )
 
 # Model from saved
-# seed_model_dir = "models/PPO-1751056386"
-# seed_model_path = f"{seed_model_dir}/2000000.zip"
-# model = PPO.load(seed_model_path, env=env)
+seed_model_dir = "models/PPO-525681"
+seed_model_path = f"{seed_model_dir}/1000000.zip"
+model = PPO.load(seed_model_path, env=env)
 
 for i in range(1, SAVES + 1):
     model.learn(
